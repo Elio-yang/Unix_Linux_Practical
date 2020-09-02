@@ -1,7 +1,7 @@
 /*
  * Author:ELio Yang
  * Date  :2020/09/02
- * this is a program to achieve simple order : more
+ * this is a program to achieve simple instruction : more
  * */
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
                 show_more(stdin);
         } else{
                 while (--argc){
-                        if ((fp=fopen(*++argv."r"))!=NULL){
+                        if ((fp=fopen(*++argv,"r"))!=NULL){
                                 show_more(fp);
                                 fclose(fp);
                         }else{
@@ -52,9 +52,9 @@ int get_instr()
         int c;
         /*need more show?*/
         printf("\033[7m more? \033[m");
-        while ((c=getchar())!EOF){
+        while ((c=getchar())!=EOF){
                 if (c=='q'){
-                        exit(0);
+                        return 0;
                 }
                 if (c=='\n'){
                         return 1;
@@ -64,4 +64,23 @@ int get_instr()
                 }
         }
         return 0;
+}
+void show_more(FILE * fp)
+{
+        char line[LINE];
+        int num_of_line=0;
+        int reply=0;
+        while (fgets(line,LINE,fp)){
+                if (num_of_line==PANE){
+                        reply=get_instr();
+                        if (reply==0){
+                                break;
+                        }
+                        num_of_line-=reply;
+                }
+                if ((fputs(line,stdout))==EOF){
+                        exit(1);
+                }
+                num_of_line++;
+        }
 }
