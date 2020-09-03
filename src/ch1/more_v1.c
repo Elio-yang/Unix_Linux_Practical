@@ -14,13 +14,15 @@
  * Space:one more pane
  * q:quit
  * */
-int get_instr();
+int
+get_instr();
 
 /*
  * show the message delivered by get_instr
  * Each time one pane of message: 24 lines with max line_length 512
  * */
-void show_more(FILE *);
+void
+show_more(FILE *);
 
 /*
  * how to use more?
@@ -28,7 +30,8 @@ void show_more(FILE *);
  * command | more
  * more < filename
  * */
-int main(int argc, char *argv[])
+int 
+main(int argc, char *argv[])
 {
         FILE *fp;
         if (argc==1){
@@ -47,7 +50,8 @@ int main(int argc, char *argv[])
         return 0;
 }
 
-int get_instr()
+int 
+get_instr()
 {
         int c;
         /*need more show?*/
@@ -59,33 +63,35 @@ int get_instr()
         **/
         while ((c=getchar())!=EOF){
                 if (c=='q'){
-                        return 0;
+                        return 0;       /*q-->exit*/
                 }
                 if (c=='\n'){
-                        return 1;
+                        return 1;       /*\n-->one more line*/
                 }
                 if (c==' '){
-                        return PANE;
+                        return PANE;    /*space-->one more pane(24lines)*/
                 }
         }
         return 0;
 }
-void show_more(FILE * fp)
+void 
+show_more(FILE * fp)
 {
-        char line[LINE];
-        int num_of_line=0;
-        int reply=0;
+        char line[LINE];        /*buffer*/
+        int num_of_line=0;      /*counting*/
+        int reply=0;            /*from get_instr()*/
         while (fgets(line,LINE,fp)){
                 if (num_of_line==PANE){
+                /*full screen with 24 lines*/
                         reply=get_instr();
                         if (reply==0){
                                 break;
                         }
-                        num_of_line-=reply;
+                        num_of_line-=reply;     /*reset the line*/
                 }
                 if ((fputs(line,stdout))==EOF){
-                        exit(1);
+                        exit(1);                /*output to stdout if EOF then exit*/
                 }
-                num_of_line++;
+                num_of_line++;                  /*count the line*/
         }
 }
