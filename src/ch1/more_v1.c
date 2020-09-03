@@ -51,7 +51,12 @@ int get_instr()
 {
         int c;
         /*need more show?*/
-        printf("\033[7m more? \033[m");
+        printf("\033[7m more? \033[0m");
+        /*
+        * here \033[7m is kind of control method
+        * \033[7m means reverse the color
+        * \033[0m means cancel the operation
+        **/
         while ((c=getchar())!=EOF){
                 if (c=='q'){
                         return 0;
