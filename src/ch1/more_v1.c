@@ -1,6 +1,8 @@
 /*
  * Author:ELio Yang
  * Date  :2020/09/02
+ * version : 0.1
+ * feature : show 24lines of context simply
  * this is a program to achieve simple instruction : more
  * */
 #include <stdio.h>

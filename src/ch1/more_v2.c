@@ -1,6 +1,8 @@
 /*
  * Author:ELio Yang
- * Date  :2020/09/02
+ * Date  :2020/09/03
+ * version :0.2
+ * feature :improve the way to get input from tunnel
  * this is a program to achieve simple instruction : more
  * */
 #include <stdio.h>
