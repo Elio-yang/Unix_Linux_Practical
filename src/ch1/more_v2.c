@@ -13,9 +13,12 @@
  * Enter:one more line
  * Space:one more pane
  * q:quit
+ * 
+ * this time an argument is added to make sure
+ * the input will be get from users but not stdin
  * */
 int
-get_instr();
+get_instr(FILE *cmd);
 
 /*
  * show the message delivered by get_instr
@@ -36,7 +39,8 @@ main(int argc, char *argv[])
         FILE *fp;
         if (argc==1){
          /*no filename we need to get from stdin*/
-                show_more(stdin);
+               show_more(stdin);
+        /*for example ls /bin | ./more_v2*/
         } else{
                 while (--argc){
                         if ((fp=fopen(*++argv,"r"))!=NULL){
@@ -51,7 +55,7 @@ main(int argc, char *argv[])
 }
 
 int 
-get_instr()
+get_instr(FILE *cmd)
 {
         int c;
         /*need more show?*/
@@ -61,7 +65,7 @@ get_instr()
         * \033[7m means reverse the color
         * \033[0m means cancel the operation
         **/
-        while ((c=getchar())!=EOF){
+        while ((c=getc(cmd))){
                 if (c=='q'){
                         return 0;       /*q-->exit*/
                 }
@@ -79,11 +83,17 @@ show_more(FILE * fp)
 {
         char line[LINE];        /*buffer*/
         int num_of_line=0;      /*counting*/
-        int reply=0;            /*from get_instr()*/
+        int reply=0;           /*from get_instr()*/
+        FILE *fp_tty;           /*get from keyboard*/
+        fp_tty=fopen("/dev/tty","r");
+        if(fp_tty==NULL){
+                exit(1);
+        }
+
         while (fgets(line,LINE,fp)){
                 if (num_of_line==PANE){
                 /*full screen with 24 lines*/
-                        reply=get_instr();
+                        reply=get_instr(fp_tty);
                         if (reply==0){
                                 break;
                         }
