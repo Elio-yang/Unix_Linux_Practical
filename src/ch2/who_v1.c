@@ -1,3 +1,40 @@
+/*
+ * Author:ELio Yang
+ * Date  :2020/09/06
+ * version : 0.1
+ * feature : show who is using the system
+ * this is a program to achieve simple instruction : who
+ * */
+/*
+ * How does it work?
+ * through man who :
+ * If FILE is not specified, use /var/run/utmp. /var/log/wtmp as FILE is common.
+ * who read the file to get information of users.
+ */
+/*
+ * Process:
+ * Read the file --->get information ---> show information ---> close file
+ * 
+ * Function needed:
+ * 
+ *   ssize_t read(int fd,void *buf,size_t count)
+ *   #include<unistd.h>  (means unix standard header) 
+ *   fd: file descriptor(can be get from open)
+ *   buf: write into this buffer
+ *   count: how many bytes to read to 
+ *   
+ *   int open(char *name,int how)--->return a file descriptor
+ *   #include<fcntl.h> (means file control)
+ *   name:file path
+ *   how: O_RDONLY O_WRONLY O_RDWT 
+ *     
+ *   int close(int fd)
+ *   #include<unistd.h>
+ *   fd: file descriptor
+ *   return 0 successfuly closed
+ *         -1 failed
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -5,7 +42,11 @@
 #include <utmp.h>
 
 #define OPEN_ERROR 1
-
+/*
+* get information from the structure utmp_buf
+* which is defined in utmp.h to save imformation
+* of the system user
+**/
 void show_info(struct utmp * utmp_buf);
 int main(int argc, char const *argv[])
 {
@@ -22,7 +63,8 @@ int main(int argc, char const *argv[])
         close(utmp_fd);
         return 0;
 }
-
+// defined in        /usr/include/x86_64-linux-gnu/bits/utmp.h
+// refered from      /usr/inlcude/utmp.h
 // struct utmp
 // {
 //   short int ut_type;		        /* Type of login.  */
