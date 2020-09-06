@@ -47,8 +47,10 @@
 * which is defined in utmp.h to save imformation
 * of the system user
 **/
-void show_info(struct utmp * utmp_buf);
-int main(int argc, char const *argv[])
+void 
+show_info(struct utmp * utmp_buf);
+int 
+main(int argc, char const *argv[])
 {
         struct utmp current_utmp;
         int utmp_fd;
@@ -89,7 +91,8 @@ int main(int argc, char const *argv[])
 //   char __glibc_reserved[20];		/* Reserved for future use.  */
 // };
 
-void show_info(struct utmp * utmp_buf)
+void 
+show_info(struct utmp * utmp_buf)
 {
         printf("%-8.8s",utmp_buf->ut_user);     /*log name*/
         printf(" ");
