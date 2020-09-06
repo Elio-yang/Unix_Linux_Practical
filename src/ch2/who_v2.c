@@ -1,8 +1,8 @@
 /*
  * Author:ELio Yang
  * Date  :2020/09/06
- * version : 0.1
- * feature : show who is using the system
+ * version : 0.2
+ * feature : show correct user-document and time
  * this is a program to achieve simple instruction : who
  * */
 /*
@@ -40,8 +40,16 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <utmp.h>
+#include <time.h>
+#define _NO_UT_TIME
+// utmp.h
+//  #ifndef _NO_UT_TIME
+//  /* We have a problem here: `ut_time' is also used otherwise.  Define
+//     _NO_UT_TIME if the compiler complains.  */
+//  # define ut_time	ut_tv.tv_sec
 
 #define OPEN_ERROR 1
+
 /*
 * get information from the structure utmp_buf
 * which is defined in utmp.h to save imformation
@@ -49,6 +57,11 @@
 **/
 void 
 show_info(struct utmp * utmp_buf);
+/*
+ * show time in a human read way 
+ */
+void
+show_time(time_t time);
 int 
 main(int argc, char const *argv[])
 {
@@ -90,21 +103,23 @@ main(int argc, char const *argv[])
 //   int32_t ut_addr_v6[4];	        /* Internet address of remote host.  */
 //   char __glibc_reserved[20];		/* Reserved for future use.  */
 // };
-// /* Values for the `ut_type' field of a `struct utmp'.  */
-// #define EMPTY	0	/* No valid user accounting information.  */
-// #define RUN_LVL	1	/* The system's runlevel.  */
-// #define BOOT_TIME	2	/* Time of system boot.  */
-// #define NEW_TIME	3	/* Time after system clock changed.  */
-// #define OLD_TIME	4	/* Time when system clock changed.  */
-// #define INIT_PROCESS	5	/* Process spawned by the init process.  */
-// #define LOGIN_PROCESS 6	/* Session leader of a logged in user.  */
-// #define USER_PROCESS	7	/* Normal process.  */
-// #define DEAD_PROCESS	8	/* Terminated process.  */
-// #define ACCOUNTING	9
+
 
 void 
 show_info(struct utmp * utmp_buf)
 {
+        // /* Values for the `ut_type' field of a `struct utmp'.  */
+        // #define EMPTY		0	/* No valid user accounting information.  */
+
+        // #define RUN_LVL		1	/* The system's runlevel.  */
+        // #define BOOT_TIME	2	/* Time of system boot.  */
+        // #define NEW_TIME	3	/* Time after system clock changed.  */
+        // #define OLD_TIME	4	/* Time when system clock changed.  */
+
+        // #define INIT_PROCESS	5	/* Process spawned by the init process.  */
+        // #define LOGIN_PROCESS	6	/* Session leader of a logged in user.  */
+        // #define USER_PROCESS	7	/* Normal process.  */
+        // #define DEAD_PROCESS	8	/* Terminated process.  */
         if(utmp_buf->ut_type!=USER_PROCESS){
                 return;
         }
@@ -112,10 +127,19 @@ show_info(struct utmp * utmp_buf)
         printf(" ");
         printf("%-8.8s",utmp_buf->ut_line);      /*device name*/
         printf(" ");
-        printf("%20d",utmp_buf->ut_tv.tv_sec);  /*login time*/
+        /* 
+        Equivalent to `asctime (localtime (timer))'.
+        extern char *ctime (const time_t *__timer) __THROW;
+        */
+        show_time((time_t)utmp_buf->ut_time);
         printf(" ");
         #ifdef HOST
-                printf("%s",utmp_buf->ut_host); /*the host*/
+                printf("%s",utmp_buf->ut_host);  /*the host*/
         #endif 
-        printf("\n");
+}
+void
+show_time(time_t time)
+{
+        char *t=ctime(&time);
+        printf("%20s",t+4);
 }
