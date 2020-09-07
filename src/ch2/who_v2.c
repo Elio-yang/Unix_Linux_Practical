@@ -38,7 +38,7 @@
  */
 /*
  * how to format this file?
- * -indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -fca -sc who_v2.c
+ * indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -fca -sc who_v2.c
  * indent can be get from: apt-get install indent
  */
 
