@@ -55,6 +55,11 @@ main(int argc, char const *argv[])
         struct utmp current_utmp;
         int utmp_fd;
         size_t size=sizeof(current_utmp);
+        /*
+         * #define _PATH_UTMP	"/var/run/utmp"
+         * #define UTMP_FILE    _PATH_UTMP
+         */
+
         if((utmp_fd=open(UTMP_FILE,O_RDONLY))==-1){
                 perror(UTMP_FILE);
                 exit(OPEN_ERROR);
