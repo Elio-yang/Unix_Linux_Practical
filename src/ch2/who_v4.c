@@ -130,7 +130,7 @@ int log_tty(char *line)
 {
 	int fd;
 	struct utmp recd;
-	off_t len = (off_t)sizeof(struct utmp);
+	off_t len = (off_t) sizeof(struct utmp);
 	int flag = -1;
 
 	if ((fd = open(UTMP_FILE, O_RDONLY)) == -1) {
@@ -141,8 +141,8 @@ int log_tty(char *line)
 		/* set type */
 		if ((strncmp(recd.ut_line, line, sizeof(recd.ut_line))) == 0) {
 			/* check name */
-			if (time((time_t *)&recd.ut_time) != (-1)) {
-				/*set time*/
+			if (time((time_t *) & recd.ut_time) != (-1)) {
+				/* set time */
 				if (lseek(fd, -len, SEEK_CUR) != (-1)) {
 					/* set back */
 					if (write(fd, &recd, len) == len) {

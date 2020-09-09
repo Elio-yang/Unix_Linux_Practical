@@ -38,17 +38,15 @@ int main(int argc, char const *argv[])
 		exit(LESSARGEXIT);
 	}
 
-	if (argc == 4 || strcmp(argv[3],"-i")) {
+	if (argc == 4 || strcmp(argv[3], "-i")) {
 		printf("Modify an existed file do you want to continue(y/n)");
 		int c;
 		while ((c = getc(stdin))) {
-			if(c=='Y'||c=='y'){
+			if (c == 'Y' || c == 'y') {
 				goto ok;
-			}
-			else if(c=='N'||c=='n'){
+			} else if (c == 'N' || c == 'n') {
 				goto done;
-			}
-			else{
+			} else {
 				printf("\n please enter y/n\n");
 			}
 		}

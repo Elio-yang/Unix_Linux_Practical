@@ -14,7 +14,6 @@
 #include <time.h>
 #define _NO_UT_TIME
 
-
 #define OPEN_ERROR 1
 
 /*
@@ -42,8 +41,6 @@ int main(int argc, char const *argv[])
 	close(utmp_fd);
 	return 0;
 }
-
-
 
 void show_info(struct utmp *utmp_buf)
 {

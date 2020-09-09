@@ -36,7 +36,7 @@ int load_utmp();
 
 struct utmp *next_utmp();
 
-void show_info(struct utmp * utmp_recd);
+void show_info(struct utmp *utmp_recd);
 
 void show_time(time_t time);
 
@@ -97,9 +97,8 @@ void show_info(struct utmp *utmp_recd)
 		return;
 	}
 	printf("%-8.8s", utmp_recd->ut_user);	/* log name */
-        printf("\n");
+	printf("\n");
 }
-
 
 void oops(const char *s1, const char *s2)
 {
