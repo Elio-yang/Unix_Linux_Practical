@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
 	}
 
 	if (argc == 4 || strcmp(argv[3],"-i")) {
-		printf("Modify a existed file do you want to continue(y/n)");
+		printf("Modify an existed file do you want to continue(y/n)");
 		int c;
 		while ((c = getc(stdin))) {
 			if(c=='Y'||c=='y'){
