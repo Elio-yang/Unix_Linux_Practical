@@ -2,7 +2,7 @@
  * Author:ELio Yang
  * Date  :2020/09/08
  * version : 0.3
- * feature : show correct user-document and time with buffer
+ * feature : show records with buffer
  * this is a program to achieve simple instruction : who
  */
 #include <stdio.h>
@@ -121,13 +121,6 @@ void show_info(struct utmp *utmp_recd)
 	printf(" ");
 	printf("%-8.8s", utmp_recd->ut_line);	/* device name */
 	printf(" ");
-	/* 
-	 * Return a string of the form "Day Mon dd hh:mm:ss yyyy\n"
-	 * that is the representation of TP in this format. 
-	 * extern char *asctime (const struct tm *__tp) __THROW;
-	 * Equivalent to `asctime (localtime (timer))'.  
-	 * extern char *ctime (const time_t *__timer) __THROW;
-	 */
 	show_time((time_t) utmp_recd->ut_time);
 	printf(" ");
       done:

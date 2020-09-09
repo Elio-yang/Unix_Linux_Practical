@@ -36,13 +36,11 @@ int load_utmp();
 
 struct utmp *next_utmp();
 
-void show_info(struct utmp *utmp_recd);
+void show_info(struct utmp * utmp_recd);
 
 void show_time(time_t time);
 
 void oops(const char *s1, const char *s2);
-
-int log_tty(char *line);
 
 int main(int argc, char const *argv[])
 {
@@ -95,63 +93,17 @@ struct utmp *next_utmp()
 
 void show_info(struct utmp *utmp_recd)
 {
-	__label__ done;
 	if (utmp_recd->ut_type != USER_PROCESS) {
-		goto done;
+		return;
 	}
 	printf("%-8.8s", utmp_recd->ut_user);	/* log name */
-	printf(" ");
-	printf("%-8.8s", utmp_recd->ut_line);	/* device name */
-	printf(" ");
-	show_time((time_t) utmp_recd->ut_time);
-	printf(" ");
-      done:
-	return;
-
-#ifdef HOST
-	printf("%s", utmp_recd->ut_host);	/* the host */
-#endif
+        printf("\n");
 }
 
-void show_time(time_t time)
-{
-	char *t = ctime(&time);
-	printf("%20s", t + 4);
-}
 
 void oops(const char *s1, const char *s2)
 {
 	fprintf(stderr, "Error : %s ", s1);
 	perror(s2);
 	exit(FAILEXIT);
-}
-
-int log_tty(char *line)
-{
-	int fd;
-	struct utmp recd;
-	off_t len = (off_t)sizeof(struct utmp);
-	int flag = -1;
-
-	if ((fd = open(UTMP_FILE, O_RDONLY)) == -1) {
-		return flag;
-	}
-	while (read(fd, &recd, len) == len) {
-		recd.ut_type = DEAD_PROCESS;
-		/* set type */
-		if ((strncmp(recd.ut_line, line, sizeof(recd.ut_line))) == 0) {
-			/* check name */
-			if (time((time_t *)&recd.ut_time) != (-1)) {
-				/*set time*/
-				if (lseek(fd, -len, SEEK_CUR) != (-1)) {
-					/* set back */
-					if (write(fd, &recd, len) == len) {
-						/* update */
-						flag = 0;
-					}
-				}
-			}
-		}
-	}
-	return flag;
 }
