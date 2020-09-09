@@ -44,11 +44,9 @@ int main(int argc, char const *argv[])
 		while ((c = getc(stdin))) {
 			if(c=='Y'||c=='y'){
 				goto ok;
-				break;
 			}
 			else if(c=='N'||c=='n'){
 				goto done;
-				break;
 			}
 			else{
 				printf("\n please enter y/n\n");
