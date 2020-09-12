@@ -14,8 +14,11 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
+#include <time.h>
 
-/*File mask*/
+/*-----------------------------------------------------------------------------
+                                     File mask
+-----------------------------------------------------------------------------*/
 #define _S_IFTM 0170000
 
 #define S_DIR 0040000
@@ -26,7 +29,9 @@
 #define S_LINK 0120000
 #define S_SOCK 0140000
 
-/*check the properties of file*/
+/*-----------------------------------------------------------------------------
+                       check the properties of file
+-----------------------------------------------------------------------------*/
 #define _S_ISTYPE(mode, mask) (((mode)&_S_IFTM) == (mask))
 #define is_dir(mode) _S_ISTYPE((mode), S_DIR)
 #define is_chr(mode) _S_ISTYPE((mode), S_CHR)
@@ -36,7 +41,9 @@
 #define is_link(mode) _S_ISTYPE((mode), S_LINK)
 #define is_sock(mode) _S_ISTYPE((mode), S_SOCK)
 
-/*set user/group/other properties*/
+/*-----------------------------------------------------------------------------
+                       set user/group/other properties
+-----------------------------------------------------------------------------*/
 #define S_ID(mode, mask) (((mode)&mask))
 
 #define S_IDRUSR 0400
@@ -58,29 +65,30 @@
 #define NAME_PTR 16
 #define FILE_MAX 255
 
+/*-----------------------------------------------------------------------------
+                        structure to store information
+-----------------------------------------------------------------------------*/
 struct FILE_STAT {
-	uid_t uid;
-	gid_t gid;
-	nlink_t links;
-	size_t size;
-	time_t mtime;
-	mode_t mode;
+	int id;
+	struct stat f_stat;
 	char *filename;
 };
+static struct FILE_STAT info[FILE_MAX];
 
-struct FILE_STAT *info[FILE_MAX];
-
+/*-----------------------------------------------------------------------------
+                        functions
+-----------------------------------------------------------------------------*/
 void do_ls(char direct[]);
 void oops(const char *s1, const char *s2);
-void print_info(int cnt, struct stat *f_stat);
+void print_info(int cnt);
 void reload();
 int mycomp(const void *a, const void *b);
 void mode_to_str(mode_t mode, char str[]);
-void stat_file(char *filename);
-
 char *uid_to_name(uid_t uid);
 char *gid_to_name(gid_t gid);
-
+/*-----------------------------------------------------------------------------
+                        main function
+-----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
 	/* argument check */
@@ -95,6 +103,9 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+/*-----------------------------------------------------------------------------
+                        list the directory(main part)
+-----------------------------------------------------------------------------*/
 void do_ls(char direct[])
 {
 	DIR *dir;
@@ -107,11 +118,14 @@ void do_ls(char direct[])
 	} else {
 		while ((dir_cur = readdir(dir)) != NULL) {
 
-			Name[cnt] = dir_cur->d_name;
+			stat(dir_cur->d_name, &(info[cnt].f_stat));
+			info[cnt].id = cnt;
+			info[cnt].filename = dir_cur->d_name;
 			cnt++;
 			if (cnt == (FILE_MAX + 1)) {
 				print_info(cnt);
 				cnt = 0;
+				reload();
 			}
 		}
 		print_info(cnt);
@@ -119,6 +133,9 @@ void do_ls(char direct[])
 	}
 }
 
+/*-----------------------------------------------------------------------------
+                              print error messages
+-----------------------------------------------------------------------------*/
 void oops(const char *s1, const char *s2)
 {
 	fprintf(stderr, "Error : %s ", s1);
@@ -126,34 +143,55 @@ void oops(const char *s1, const char *s2)
 	exit(ERROR);
 }
 
-void print_info(int cnt, struct stat *f_stat)
+/*-----------------------------------------------------------------------------
+                       core of ls:sroting and printing 
+-----------------------------------------------------------------------------*/
+void print_info(int cnt)
 {
-	qsort(Name, cnt, sizeof(char *), mycomp);
+	char mode_str[11];
+	qsort(info, cnt, sizeof(struct FILE_STAT), mycomp);
 	for (int i = 0; i < cnt; i++) {
-		if (Name[i] == 0) {
+		if (info[i].id == -1) {
 			break;
 		}
 
-		printf("%20s     ", Name[i]);
-		if ((i + 1) % 5 == 0) {
+		mode_to_str(info[i].f_stat.st_mode, mode_str);
+		printf("%s", mode_str);
+		printf("%4d ", (int)info[i].f_stat.st_nlink);
+		printf("%-8s", uid_to_name(info[i].f_stat.st_uid));
+		printf("%-8s", gid_to_name(info[i].f_stat.st_gid));
+		printf("%8ld ", (long)info[i].f_stat.st_size);
+		printf("%.14s ",
+		       4 + ctime((time_t *) & (info[i].f_stat.st_mtim)));
+		printf("%s", info[i].filename);
+		if (i < cnt - 1) {
 			printf("\n");
 		}
 	}
 	printf("\n");
 }
 
+/*-----------------------------------------------------------------------------
+                reload the array:-1 means has been printed
+-----------------------------------------------------------------------------*/
 void reload()
 {
-	memset(Name, 0, FILE_MAX * (sizeof(char *)));
+	memset(info, -1, FILE_MAX * (sizeof(struct stat)));
 }
 
+/*-----------------------------------------------------------------------------
+		mycomp for qsort: using struct-->filename
+-----------------------------------------------------------------------------*/
 int mycomp(const void *a, const void *b)
 {
-	return (-strcmp
+	return (strcmp
 		(((struct FILE_STAT *)a)->filename,
 		 ((struct FILE_STAT *)b)->filename));
 }
 
+/*-----------------------------------------------------------------------------
+                set mode descriptor
+-----------------------------------------------------------------------------*/
 void mode_to_str(mode_t mode, char str[])
 {
 	strcpy(str, "----------");
@@ -192,16 +230,9 @@ void mode_to_str(mode_t mode, char str[])
 		str[9] = 'x';
 }
 
-void stat_file(char *filename)
-{
-	struct stat f_stat;
-	if (stat(filename, &f_stat) == -1) {
-		perror(filename);
-	} else {
-
-	}
-}
-
+/*-----------------------------------------------------------------------------
+                uid to string if name==NULL then id
+-----------------------------------------------------------------------------*/
 char *uid_to_name(uid_t uid)
 {
 	struct passwd *pwd;
@@ -214,6 +245,9 @@ char *uid_to_name(uid_t uid)
 	}
 }
 
+/*-----------------------------------------------------------------------------
+                gid to string if name==NULL then id
+-----------------------------------------------------------------------------*/
 char *gid_to_name(gid_t gid)
 {
 	struct group *grp;
