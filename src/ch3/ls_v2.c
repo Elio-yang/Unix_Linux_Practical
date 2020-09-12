@@ -1,10 +1,10 @@
-/*
- * Author:ELio Yang
- * Date  :2020/09/11
- * version : 0.2
- * feature : list file/directory aith more information
- * this is a program to achieve simple instruction : ls -a -l
- */
+/*-----------------------------------------------------------------------------
+ |		Author:ELio Yang                                              |
+ |		Date  :2020/09/11                                             |
+ |		version : 0.2                                                 |
+ |		feature : list file/directory aith more information           |
+ |		this is a program to achieve simple instruction : ls -a -l    |
+ -----------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <dirent.h>
