@@ -144,7 +144,7 @@ void oops(const char *s1, const char *s2)
 }
 
 /*-----------------------------------------------------------------------------
-                       core of ls:sroting and printing 
+                       core of ls:sorting and printing 
 -----------------------------------------------------------------------------*/
 void print_info(int cnt)
 {
