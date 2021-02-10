@@ -24,5 +24,3 @@ cp_v1.o:
 	
 clean :
 	rm -f *.o $(ALL)
-
-	
