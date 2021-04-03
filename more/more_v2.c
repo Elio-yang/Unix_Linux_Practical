@@ -108,4 +108,6 @@ show_more(FILE * fp)
                 }
                 num_of_line++;                  
                 /*count the line*/
-        }
+	}
+}
+
