@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "GNU",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "includePath": [
+                "${workspaceFolder}"
+            ],
+            "cStandard": "gnu99"
+        }
+    ],
+    "version": 4
+ }
